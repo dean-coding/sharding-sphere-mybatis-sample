@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.ds.mapper.UserMapper">
+    <resultMap id="baseResultMap" type="com.example.ds.model.User">
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+        <result column="pwd" property="pwd" jdbcType="VARCHAR"/>
+        <result column="assisted_query_pwd" property="assistedQueryPwd" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <update id="createTableIfNotExists">
+        CREATE TABLE IF NOT EXISTS t_user (user_id INT NOT NULL AUTO_INCREMENT, user_name VARCHAR(200), pwd VARCHAR(200), assisted_query_pwd VARCHAR(200), PRIMARY KEY (user_id));
+    </update>
+
+    <update id="truncateTable">
+        TRUNCATE TABLE t_user;
+    </update>
+
+    <update id="dropTable">
+        DROP TABLE IF EXISTS t_user;
+    </update>
+
+    <insert id="insert">
+        INSERT INTO t_user (user_id, user_name, pwd,assisted_query_pwd) VALUES (#{userId,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, #{pwd,jdbcType=VARCHAR},#{assistedQueryPwd,jdbcType=VARCHAR})
+    </insert>
+
+    <insert id="insertBatch">
+        insert into  t_user (user_id,user_name, pwd,assisted_query_pwd)
+        values
+        <foreach collection="datas" item="d"  separator="," close=";">
+            (
+             #{d.userId,jdbcType=INTEGER},
+             #{d.userName,jdbcType=VARCHAR},
+             #{d.pwd,jdbcType=VARCHAR},
+             #{d.assistedQueryPwd,jdbcType=VARCHAR}
+            )
+        </foreach>
+
+    </insert>
+
+    <update id="resetInitPwdByNames">
+        update t_user set pwd = '12345'
+        where user_name in
+        <foreach collection="names" item="name"  open="(" separator="," close=")">
+            #{name}
+        </foreach>
+    </update>
+
+
+    <delete id="delete">
+        DELETE FROM t_user WHERE user_id = #{userId,jdbcType=INTEGER};
+    </delete>
+
+    <select id="selectAll" resultMap="baseResultMap">
+        SELECT * FROM t_user;
+    </select>
+
+
+    <select id="selectByLimit" resultMap="baseResultMap">
+        SELECT * FROM t_user limit #{page},#{size};
+    </select>
+
+    <select id="existsByName" resultType="java.lang.Integer">
+        select
+        count(Distinct user_name)
+        from t_user
+        where user_name in
+        <foreach collection="names" item="name" open="(" separator="," close=")">
+            #{name}
+        </foreach>
+    </select>
+</mapper>

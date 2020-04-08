@@ -1,0 +1,21 @@
+
+mybatis:
+  mapper-locations: classpath:mapper/**/*.xml
+  type-aliases-package: com.example.ds.model
+
+sharding:
+  prop:
+    sqlShow: false
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/test?autoReconnect=true&useUnicode=true&characterEncoding=UTF8&useSSL=false
+    username: root
+    password: root
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari.minimum-idle: 10
+    hikari.maximumPoolSize: 40
+    hikari.pool-name: inventorycenter-core-hikariCP
+    hikari.connection-test-query: SELECT 1
+    hikari.data-source-properties.cachePrepStmts: true
+    hikari.leak-detection-threshold: 4000
